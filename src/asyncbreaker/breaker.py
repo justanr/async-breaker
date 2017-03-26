@@ -130,7 +130,7 @@ class CircuitBreaker:
         to reset to completely blank slate. Default: 30 seconds.
     :param timedelta cooldown: Time period that the breaker will refuse calls after being tripped,
         after which it will allow the exploratory request. Default: 30 seconds.
-    :param asyncio.Lock lock: The lock that should be used to guard requests, if not provided
+    :param asyncio.Semaphore lock: The lock that should be used to guard requests, if not provided
         one is created using the current event loop.
     :param Callable[Exception,Boolean] process_exception: Callback used to help decide if an
         exception should be counted as a failure
@@ -155,7 +155,7 @@ class CircuitBreaker:
         self._retry_at = datetime.utcfromtimestamp(0)
 
         self._process_exception = process_exception
-        self._lock = lock or asyncio.Lock(loop=asyncio.get_event_loop())
+        self._lock = lock or asyncio.Semaphore(max_failures, loop=asyncio.get_event_loop())
 
     async def run(self, coro):
         async with self._lock:

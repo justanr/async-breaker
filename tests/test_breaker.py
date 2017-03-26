@@ -72,7 +72,7 @@ async def test_transitions_to_open_upon_reaching_threshold():
 
 @pytest.mark.asyncio
 async def test_records_only_specific_failures():
-    breaker = CircuitBreaker('test', 0, record_only=ValueError)
+    breaker = CircuitBreaker('test', 1, record_only=ValueError)
 
     with pytest.raises(IntendedFailure):
         await breaker.run(raiser(IntendedFailure()))
